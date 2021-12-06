@@ -1,0 +1,10 @@
+{
+    "login": true,
+    "login/diego.souza": false,
+    "send.email": 1,
+    "send.sms": 0,
+    "test.a": "1",
+    "test.b": "0",
+    "test.c": "on",
+    "test.d": null
+}

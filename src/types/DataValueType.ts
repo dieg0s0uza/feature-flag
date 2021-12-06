@@ -1,0 +1,1 @@
+export type DataValueType = boolean | number | string | null;

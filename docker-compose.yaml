@@ -1,0 +1,22 @@
+version: '3'
+services:
+
+  mongo-db:
+    container_name: mongo-db
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+
+  redis-db:
+    container_name: redis-db
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  memcached-db:
+    container_name: memcached-db
+    image: memcached
+    ports:
+        - "11211:11211"
