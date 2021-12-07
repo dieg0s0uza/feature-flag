@@ -7,8 +7,6 @@ If you need more flexibility in your apps, like enable/disable features in produ
 
 It's not only used to turn on or turn off features or test A/B, you can use it to config your app in realtime, getting values from anywere (file, memory, databases, cache, api, realy anywere) to inject in yours business logic to change it when you want.
 
-<br/>
-
 ## Why should I use this one instead of create my own or use another?
 
 - Because it's easy to use, small size and you don't need to spend more time to code again.
@@ -16,8 +14,6 @@ It's not only used to turn on or turn off features or test A/B, you can use it t
 - Moreover, you can implement your own provider, just extending or implementing some provider or interface.
 
 - With this module, you can using your own infrastructure, like local or cloud databases, very important when your product or company is not so flexibility to explore other services.
-
-<br/>
 
 ## Install
 
@@ -33,11 +29,7 @@ Using yarn:
 yarn add node-feature-flag
 ```
 
-<br/>
-
 ## Examples
-
-<br/>
 
 ### Using basic **JSON** data provider
 
@@ -72,8 +64,6 @@ import { FeatureFlag, JsonDataProvider } from "node-feature-flag";
 })();
 ```
 
-<br/>
-
 ### Using **Mongoose** data provider
 
 ```js
@@ -90,8 +80,6 @@ import mongoose from "mongoose";
     // continue...
 })();
 ```
-
-<br/>
 
 ### Using **Mongodb** (native drive) data provider
 
@@ -110,8 +98,6 @@ import { MongoClient } from "mongodb";
     // continue...
 })();
 ```
-
-<br/>
 
 ### Using **Mongoose** data provider with **Redis** cache provider
 
@@ -140,8 +126,6 @@ import { createClient } from "redis";
 })();
 ```
 
-<br/>
-
 ### Using **Mongodb** (native drive) data provider with **Memcached** cache provider
 
 ```js
@@ -169,8 +153,6 @@ import memjs from "memjs";
 })();
 ```
 
-<br/>
-
 ### Using your own data provider implementation
 
 ```js
@@ -187,8 +169,6 @@ export class MyDataProvider implements IDataProvider {
     }
 }
 ```
-
-<br/>
 
 ### Using your own cache provider implementation
 
@@ -207,15 +187,11 @@ export class MyCacheProvider implements ICacheProvider {
 }
 ```
 
-<br/>
-
 ### Feel free to contribute
 
 - If you find a bug or have a good idea, share with us.
 
 - And if you create a new module to data or cache provider, lets us know to add here to help comunnity.
-
-<br />
 
 ### License & copyright
 
