@@ -16,6 +16,9 @@ const print = async (feature: FeatureFlag, key: string) => {
     // config data provider
     const data = config;
 
+    // load json from file
+    // const file = `${__dirname}${path.sep}config.json`;
+
     // use data provider
     const dataProvider = new JsonDataProvider({ data });
     const feature = new FeatureFlag({ dataProvider });

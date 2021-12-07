@@ -1,6 +1,6 @@
 {
   "name": "node-feature-flag",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Feature Flag",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,7 +10,6 @@
     "test": "jest",
     "prepublish": "npm run test && npm run build",
     "example": "npx ts-node examples/json/index.ts",
-    "postinstall": "husky install",
     "prepare": "husky install"
   },
   "repository": {
