@@ -1,5 +1,5 @@
 import { ICacheProvider } from './ICacheProvider';
-import { CacheValueType } from './../types/CacheValueType'
+import { CacheModel } from './../models'
 
 interface Options {
     client: any,
@@ -13,11 +13,11 @@ export class RedisCacheProvider implements ICacheProvider {
         this.client = options.client;
         this.lifetime = options.lifetime || 3600;
     }
-    async get(key: string): Promise<CacheValueType | undefined> {
+    async get(key: string): Promise<CacheModel | undefined> {
         const result = await this.client.get(key);
-        return result ? JSON.parse(result) : undefined;
+        return result ? { key, value: JSON.parse(result) } : undefined;
     }
-    async set(key: string, value: CacheValueType): Promise<void> {
-        await this.client.set(key, JSON.stringify(value), { EX: this.lifetime });
+    async set(data: CacheModel): Promise<void> {
+        await this.client.set(data.key, JSON.stringify(data.value), { EX: this.lifetime });
     }
 }

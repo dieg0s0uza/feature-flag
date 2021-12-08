@@ -1,5 +1,5 @@
 import { IDataProvider } from './IDataProvider';
-import { DataModel } from '../models/DataModel';
+import { DataModel } from '../models';
 import * as mongoDB from "mongodb";
 
 const DEFAULT_COLLECTION = 'features';

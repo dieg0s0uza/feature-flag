@@ -3,9 +3,13 @@
 
 This is a node **Feature Flag (Feature Toggle)** module with common data/cache providers like json, mongodb, redis and memcached. If you need another or more complexed provider, feel free to implement it.
 
+<p align="center" width="100%">
+    <img src="assets/node-feature-flag.png">
+</p>
+
 If you need more flexibility in your apps, like enable/disable features in production without change environments to deploy manualy or rerun the pipeline, this module is pretty good for you and your team.
 
-It's not only used to turn on or turn off features or test A/B, you can use it to config your app in realtime, getting values from anywere (file, memory, databases, cache, api, realy anywere) to inject in yours business logic to change it when you want.
+It's not only used to turn on or turn off features or test A/B, you can use it to config your app in realtime, getting values from anywere (file, memory, databases, cache, api, realy anywere) to inject in your business logic to change it when you want.
 
 ## Why should I use this one instead of create my own or use another?
 
@@ -28,6 +32,65 @@ Using yarn:
 ```bash
 yarn add node-feature-flag
 ```
+
+## How to use
+
+Import the FeatureFlag and prepare to load data from some provider
+
+```js
+    import { FeatureFlag, JsonDataProvider } from "node-feature-flag";
+    
+    const dataProvider = new JsonDataProvider({ "feature": true });
+    const featureFlag = new FeatureFlag({ dataProvider });
+```
+
+### Check flags
+
+Check the feature status:
+
+```js
+    const isOn = await featureFlag.isOn("feature");
+    const isOff = await featureFlag.isOff("feature");
+```
+
+Get the feature data, with origin (memory, cache or data):
+
+```js
+    const data = await featureFlag.get("feature");
+    console.log(data); // return undefined or feature object
+    /*
+        // print
+        {
+            key: "feature",
+            value: true,
+            description: null,
+            origin: 'data'
+        }
+    */
+```
+
+Get the feature value:
+
+```js
+    const value = await featureFlag.getValue("feature");
+    console.log(data); // return any value
+    // print true
+```
+
+If you prefer, you can load all features from data provider to memory.
+
+```js
+    await featureFlag.isOn("feature"); // from data
+    await featureFlag.isOn("feature"); // from data
+    await feature.loadAll();
+    await featureFlag.isOn("feature"); // from memory
+```
+
+**The feature flag process flow** 
+
+<p align="center" width="100%">
+    <img src="assets/feature-flag.jpg">
+</p>
 
 ## Examples
 
@@ -173,7 +236,7 @@ export class MyDataProvider implements IDataProvider {
 ### Using your own cache provider implementation
 
 ```js
-import { ICacheProvider, DataModel, DataValueType } from "node-feature-flag";
+import { ICacheProvider, CacheValueType, DataValueType } from "node-feature-flag";
 
 export class MyCacheProvider implements ICacheProvider {
 
@@ -181,7 +244,7 @@ export class MyCacheProvider implements ICacheProvider {
         // return a unique cached feature by key
     }
 
-    async set(key: string, value: CacheValueType): Promise<void> {
+    async set(key: string, value: DataValueType): Promise<void> {
         // create/update a unique cached feature by key
     }
 }
@@ -191,7 +254,7 @@ export class MyCacheProvider implements ICacheProvider {
 
 - If you find a bug or have a good idea, share with us.
 
-- And if you create a new module to data or cache provider, lets us know to add here to help comunnity.
+- And if you create a new module to data or cache provider, let us know to add here to help community.
 
 ### License & copyright
 

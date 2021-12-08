@@ -1,0 +1,19 @@
+{
+    "login": true,
+    "login:username": false,
+    "send:email": 1,
+    "send:sms": 0,
+    "test:a": "true",
+    "test:b": "false",
+    "test:c": "1",
+    "test:d": "0",
+    "test:e": "on",
+    "test:f": "off",
+    "test:g": "t",
+    "test:h": "f",
+    "test:i": "y",
+    "test:j": "n",
+    "test:k": "yes",
+    "test:l": "no",
+    "test:m": null
+}

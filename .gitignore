@@ -104,3 +104,8 @@ dist
 .tern-port
 
 dist
+
+examples/mongodb
+examples/mongoose
+examples/redis
+examples/memcached

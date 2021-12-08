@@ -1,8 +1,8 @@
-import { IDataProvider } from "./providers/IDataProvider";
-import { ICacheProvider } from "./providers/ICacheProvider";
+import { IDataProvider } from "./providers";
+import { ICacheProvider } from "./providers";
 import { isOn, isOff } from "./utils";
-import { DataValueType, CacheValueType } from "./types";
-import { ValueModel, DataModel } from "./models";
+import { ValueModel, DataModel, CacheModel } from "./models";
+import { DataValueType } from "./types";
 import { ProviderEnum } from "./enums";
 
 interface Options {
@@ -24,24 +24,26 @@ export class FeatureFlag {
         this.cacheProvider = options.cacheProvider;
     }
 
-    private getFromMemory(key: string): DataValueType | undefined {
+    private getFromMemory(key: string): DataModel | undefined {
         const dataResult = this.list.find(a => a.key === key);
-        return dataResult === undefined ? undefined : dataResult.value;
+        return dataResult || undefined;
     }
 
-    private async getFromCache(key: string): Promise<CacheValueType | undefined> {
-        if (!this.cacheProvider) return undefined;
-        return await this.cacheProvider.get(key);
+    private async getFromCache(key: string): Promise<CacheModel | undefined> {
+        if (this.cacheProvider) {
+            return await this.cacheProvider.get(key);
+        }
+        return undefined;
     }
 
-    private async getFromData(key: string): Promise<DataValueType | undefined> {
-        const dataResult = await this.dataProvider.get(key);
-        return dataResult === undefined ? undefined : dataResult.value;
+    private async getFromData(key: string): Promise<DataModel | undefined> {
+        return await this.dataProvider.get(key);
     }
 
-    private async updateCache(key: string, value: DataValueType): Promise<void> {
-        if (!this.cacheProvider) return;
-        this.cacheProvider.set(key, value);
+    private async updateCache(data: CacheModel): Promise<void> {
+        if (this.cacheProvider) {
+            await this.cacheProvider.set(data);
+        }
     }
 
     /**
@@ -54,17 +56,18 @@ export class FeatureFlag {
     }
 
     /**
-     * Return the feature from memory, cache provider or data provider
+     * Return the feature data
      * @param key Unique feature identifier
-     * @param GetOptions 
-     * @returns Model with origin provider and value boolean, number, string, null or undefined
+     * @param options GetOptions 
+     * @returns ValueModel with origin provider, key and value or undefined
      */
     async get(key: string, options?: GetOptions): Promise<ValueModel | undefined> {
         const memoryResult = this.getFromMemory(key);
         if (memoryResult !== undefined) {
             return {
                 key,
-                value: memoryResult,
+                value: memoryResult.value,
+                description: memoryResult.description,
                 origin: ProviderEnum.Memory
             };
         }
@@ -74,7 +77,7 @@ export class FeatureFlag {
             if (cacheResult !== undefined) {
                 return {
                     key,
-                    value: cacheResult,
+                    value: cacheResult.value,
                     origin: ProviderEnum.Cache
                 };
             }
@@ -82,13 +85,28 @@ export class FeatureFlag {
 
         const dataResult = await this.getFromData(key);
         if (dataResult !== undefined) {
-            await this.updateCache(key, dataResult)
+            await this.updateCache({ key, value: dataResult.value })
         }
-        return dataResult === undefined ? undefined : {
-            key,
-            value: dataResult,
-            origin: ProviderEnum.Data
-        };
+        if (dataResult !== undefined) {
+            return {
+                key,
+                value: dataResult.value,
+                description: dataResult.description,
+                origin: ProviderEnum.Data
+            };
+        }
+        return undefined;
+    }
+
+    /**
+     * Return the feature value
+     * @param key Unique feature identifiers
+     * @param options GetOptions
+     * @returns The DataValueType (alias to any)
+     */
+    async getValue(key: string, options?: GetOptions): Promise<DataValueType | undefined> {
+        const data = await this.get(key, options);
+        return data && data.value;
     }
 
     /**

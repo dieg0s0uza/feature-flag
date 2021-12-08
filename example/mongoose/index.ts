@@ -1,5 +1,6 @@
 import { FeatureFlag, isOn } from '../../src';
-import { JsonDataProvider } from '../../src/providers/JsonDataProvider';
+import mongoose from 'mongoose';
+import { MongooseDataProvider } from '../../src/providers/MongooseDataProvider';
 import config from './config.json';
 
 const print = async (feature: FeatureFlag, key: string) => {
@@ -7,31 +8,29 @@ const print = async (feature: FeatureFlag, key: string) => {
     return {
         key,
         status: isOn(data) ? 'on' : 'off',
-        value: data ? data.value : undefined,
-        origin: data ? data.origin : undefined
+        value: data && data.value,
+        origin: data && data.origin
     };
 };
 
 (async () => {
     // config data provider
-    const data = config;
-
-    // load json from file
-    // const file = `${__dirname}${path.sep}config.json`;
+    await mongoose.connect(config.mongoUrl);
 
     // use data provider
-    const dataProvider = new JsonDataProvider({ data });
+    const dataProvider = new MongooseDataProvider();
     const feature = new FeatureFlag({ dataProvider });
 
     // load all features from data provider to memory
-    await feature.loadAll();
+    // await feature.loadAll();
 
     // check feature flags
     const list: any[] = [];
-    for (const key in data) {
+    for (const key of config.features) {
         list.push(await print(feature, key));
     }
     list.push(await print(feature, 'other'));
     console.table(list);
 
+    mongoose.disconnect();
 })();

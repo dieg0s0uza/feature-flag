@@ -1,24 +1,23 @@
-import { IDataProvider } from '../providers/IDataProvider';
-import { DataModel } from '../models/DataModel';
-import { DataValueType } from '../types';
+import { IDataProvider } from '../providers';
+import { DataModel } from '../models';
 import fs from 'fs';
 
 interface KeyValue {
-    [key: string]: DataValueType;
+    [key: string]: any;
 };
 
 interface Options {
-    data?: KeyValue,
+    data?: KeyValue | DataModel[],
     file?: string
 };
 
 export class JsonDataProvider implements IDataProvider {
-    private data?: KeyValue;
+    private data: KeyValue | DataModel[] = {};
 
     constructor(options: Options) {
         if (options.file) {
             this.loadFromFile(options.file);
-        } else {
+        } else if (options.data) {
             this.data = options.data;
         }
     }
@@ -31,17 +30,32 @@ export class JsonDataProvider implements IDataProvider {
     }
 
     async getAll(): Promise<DataModel[]> {
-        if (!this.data) return [];
-        const jsonKeys = Object.keys(this.data);
-        return jsonKeys.map(a => ({
-            key: a,
-            value: this.data![a]
-        }));
+        if (this.data) {
+            if (this.data instanceof Array) {
+                return this.data;
+            } else {
+                const keys = Object.keys(this.data);
+                return keys.map(key => ({ key, value: (this.data as KeyValue)[key] }))
+            }
+        }
+        return [];
     }
 
     async get(key: string): Promise<DataModel | undefined> {
-        if (!this.data) return undefined;
-        const value = this.data[key];
-        return { key, value };
+        if (this.data) {
+            if (this.data instanceof Array) {
+                const data = (this.data as DataModel[]).find(a => a.key === key);
+                console.log('data', key, data);
+                if (data) {
+                    return data;
+                }
+            } else {
+                const objValue = (this.data as KeyValue)[key];
+                if (objValue !== undefined) {
+                    return { key, value: objValue };
+                }
+            }
+        }
+        return undefined;
     }
 }

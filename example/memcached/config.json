@@ -1,0 +1,15 @@
+{
+    "memcachedUrl": "localhost:11211",
+    "mongoUrl": "mongodb://localhost:27017/test",
+    "features": [
+        "login",
+        "login:username",
+        "send:email",
+        "send:sms",
+        "test:a",
+        "test:b",
+        "test:c",
+        "test:d",
+        "test:e"
+    ]
+}

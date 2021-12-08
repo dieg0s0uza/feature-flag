@@ -1,5 +1,5 @@
 import { ICacheProvider } from './ICacheProvider';
-import { CacheValueType, DataValueType } from './../types'
+import { CacheModel } from './../models'
 
 interface Options {
     client: any,
@@ -13,11 +13,11 @@ export class MemcachedCacheProvider implements ICacheProvider {
         this.client = options.client;
         this.lifetime = options.lifetime || 3600;
     }
-    async get(key: string): Promise<CacheValueType | undefined> {
+    async get(key: string): Promise<CacheModel | undefined> {
         const { value } = await this.client.get(key);
-        return value ? JSON.parse(value) : undefined;
+        return value ? { key, value: JSON.parse(value) } : undefined;
     }
-    async set(key: string, value: DataValueType): Promise<void> {
-        return await this.client.set(key, JSON.stringify(value), { expires: this.lifetime });
+    async set(data: CacheModel): Promise<void> {
+        await this.client.set(data.key, JSON.stringify(data.value), { expires: this.lifetime });
     }
 }

@@ -4,5 +4,6 @@ import { ProviderEnum } from "../enums";
 export interface ValueModel {
     key: string;
     value: DataValueType;
-    origin: ProviderEnum;
+    description?: string;
+    readonly origin: ProviderEnum;
 }

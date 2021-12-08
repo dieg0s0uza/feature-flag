@@ -1,0 +1,71 @@
+[
+    {
+        "key": "login",
+        "value": true,
+        "description": "The description is optional"
+    },
+    {
+        "key": "login:username",
+        "value": false
+    },
+    {
+        "key": "send:email",
+        "value": 1
+    },
+    {
+        "key": "send:sms",
+        "value": 0
+    },
+    {
+        "key": "test:a",
+        "value": "true"
+    },
+    {
+        "key": "test:b",
+        "value": "false"
+    },
+    {
+        "key": "test:c",
+        "value": "1"
+    },
+    {
+        "key": "test:d",
+        "value": "0"
+    },
+    {
+        "key": "test:e",
+        "value": "on"
+    },
+    {
+        "key": "test:f",
+        "value": "off"
+    },
+    {
+        "key": "test:g",
+        "value": "t"
+    },
+    {
+        "key": "test:h",
+        "value": "f"
+    },
+    {
+        "key": "test:i",
+        "value": "y"
+    },
+    {
+        "key": "test:j",
+        "value": "n"
+    },
+    {
+        "key": "test:k",
+        "value": "yes"
+    },
+    {
+        "key": "test:l",
+        "value": "no"
+    },
+    {
+        "key": "test:m",
+        "value": null
+    }
+]

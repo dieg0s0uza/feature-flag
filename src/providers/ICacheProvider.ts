@@ -1,17 +1,16 @@
-import { CacheValueType, DataValueType } from "../types";
+import { CacheModel } from "../models";
 
 export interface ICacheProvider {
     /**
      * Get a feature data
      * @param key Unique feature identifier
-     * @returns A CacheValueType converted from a string or a undefined value if not found
+     * @returns A CacheModel with value or a undefined value if not found
      */
-    get(key: string): Promise<CacheValueType | undefined>
+    get(key: string): Promise<CacheModel | undefined>
 
     /**
      * Set a new value to cache
-     * @param key Unique feature identifier
-     * @param value A DataValueType that can be converted to string
+     * @param data CacheModel with a unique feature identifier and value
      */
-    set(key: string, value: DataValueType): Promise<void>
+    set(data: CacheModel): Promise<void>
 }

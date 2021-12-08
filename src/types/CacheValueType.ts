@@ -1,1 +1,1 @@
-export type CacheValueType = string | null;
+export type CacheValueType = any;

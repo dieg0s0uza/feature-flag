@@ -1,6 +1,6 @@
 import { Schema, model, Model, Connection } from 'mongoose';
-import { IDataProvider } from '../providers/IDataProvider';
-import { DataModel } from '../models/DataModel';
+import { IDataProvider } from '../providers';
+import { DataModel } from '../models';
 
 const DEFAULT_COLLECTION = 'features';
 

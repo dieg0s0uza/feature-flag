@@ -1,1 +1,1 @@
-export type DataValueType = boolean | number | string | null;
+export type DataValueType = any;

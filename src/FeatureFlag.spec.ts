@@ -1,7 +1,7 @@
 import { ICacheProvider, JsonDataProvider } from '.';
 import FeatureFlag from './FeatureFlag';
 import { ProviderEnum } from './enums'
-import { CacheValueType, DataValueType } from './types';
+import { CacheModel } from './models';
 
 describe('Feature Flag', () => {
 
@@ -281,10 +281,10 @@ describe('Feature Flag', () => {
             const data = { test: true };
             const dataProvider = new JsonDataProvider({ data });
             class CacheTestProvider implements ICacheProvider {
-                async get(key: string): Promise<CacheValueType | undefined> {
-                    return JSON.stringify(key === 'test');
+                async get(key: string): Promise<CacheModel | undefined> {
+                    return { key, value: JSON.stringify(key === 'test') };
                 }
-                async set(key: string, value: DataValueType): Promise<void> {
+                async set(data: CacheModel): Promise<void> {
                 }
             }
             const cacheProvider = new CacheTestProvider();
