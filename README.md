@@ -89,7 +89,7 @@ If you prefer, you can load all features from data provider to memory.
 **The feature flag process flow** 
 
 <p align="center" width="100%">
-    <img src="assets/feature-flag.jpg">
+    <img src="assets/feature-flag-flow.png">
 </p>
 
 ## Examples
