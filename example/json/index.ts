@@ -1,5 +1,5 @@
 import { FeatureFlag, isOn } from '../../src';
-import { JsonDataProvider } from '../../src/providers/JsonDataProvider';
+import { JsonDataProvider } from '../../src/providers';
 import objData from './object.json';
 import arrData from './array.json';
 
@@ -20,9 +20,6 @@ const print = async (feature: FeatureFlag, key: string) => {
     // use data provider
     const dataProvider = new JsonDataProvider({ data: arrData });
     const feature = new FeatureFlag({ dataProvider });
-
-    // load all features from data provider to memory
-    // await feature.loadAll();
 
     // check feature flags
     const list: any[] = [];

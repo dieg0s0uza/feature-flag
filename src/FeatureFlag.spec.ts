@@ -1,4 +1,4 @@
-import { ICacheProvider, JsonDataProvider } from '.';
+import { ICacheProvider, JsonDataProvider, MemoryProvider } from '.';
 import FeatureFlag from './FeatureFlag';
 import { ProviderEnum } from './enums'
 import { CacheModel } from './models';
@@ -297,7 +297,8 @@ describe('Feature Flag', () => {
         test('should return from memory', async () => {
             const data = { test: true };
             const dataProvider = new JsonDataProvider({ data });
-            const featureFlag = new FeatureFlag({ dataProvider });
+            const memoryProvider = new MemoryProvider({ lifetime: 3 });
+            const featureFlag = new FeatureFlag({ dataProvider, memoryProvider });
             await featureFlag.loadAll();
             const feature = await featureFlag.get('test');
             expect(feature).not.toBeUndefined();

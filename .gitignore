@@ -105,7 +105,7 @@ dist
 
 dist
 
-examples/mongodb
-examples/mongoose
-examples/redis
-examples/memcached
+example/mongodb
+example/mongoose
+example/redis
+example/memcached
