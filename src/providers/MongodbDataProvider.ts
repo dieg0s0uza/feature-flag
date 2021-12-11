@@ -1,11 +1,13 @@
-import { IDataProvider } from './IDataProvider';
+import { IDataProvider } from './';
 import { DataModel } from '../models';
 import * as mongoDB from "mongodb";
 
 const DEFAULT_COLLECTION = 'features';
 
 interface Options {
+    /** Collection name of data. Default: 'features' */
     collectionName?: string,
+    /** A instance of mongodb */
     db: mongoDB.Db
 }
 

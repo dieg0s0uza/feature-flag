@@ -1,8 +1,10 @@
-import { ICacheProvider } from './ICacheProvider';
+import { ICacheProvider } from './';
 import { CacheModel } from './../models'
 
 interface Options {
+    /** A client instance to Memcached */
     client: any,
+    /** Lifetime (in seconds) of each feature in memory. Default: 3600 */
     lifetime?: number
 }
 

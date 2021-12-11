@@ -1,58 +1,80 @@
-import { IDataProvider } from "./providers";
-import { ICacheProvider } from "./providers";
+import { IDataProvider, ICacheProvider, IMemoryProvider } from "./providers";
 import { isOn, isOff } from "./utils";
-import { ValueModel, DataModel, CacheModel } from "./models";
+import { ValueModel, DataModel, CacheModel, MemoryModel } from "./models";
 import { DataValueType } from "./types";
 import { ProviderEnum } from "./enums";
 
 interface Options {
     dataProvider: IDataProvider
     cacheProvider?: ICacheProvider
+    memoryProvider?: IMemoryProvider
+    memoryProviderLifetime?: number
 }
 
 interface GetOptions {
-    noCached: boolean
+    noCache: boolean,
+    noMemory: boolean
 }
 
 export class FeatureFlag {
     private dataProvider: IDataProvider;
     private cacheProvider?: ICacheProvider;
-    private list: DataModel[] = [];
+    private memoryProvider?: IMemoryProvider;
 
     constructor(options: Options) {
         this.dataProvider = options.dataProvider;
         this.cacheProvider = options.cacheProvider;
+        this.memoryProvider = options.memoryProvider;
     }
 
-    private getFromMemory(key: string): DataModel | undefined {
-        const dataResult = this.list.find(a => a.key === key);
-        return dataResult || undefined;
+    private async getFromMemory(key: string): Promise<MemoryModel | undefined> {
+        if (!this.memoryProvider) return undefined;
+        return await this.memoryProvider.get(key);
     }
 
     private async getFromCache(key: string): Promise<CacheModel | undefined> {
-        if (this.cacheProvider) {
-            return await this.cacheProvider.get(key);
-        }
-        return undefined;
+        if (!this.cacheProvider) return undefined;
+        return await this.cacheProvider.get(key);
     }
 
     private async getFromData(key: string): Promise<DataModel | undefined> {
         return await this.dataProvider.get(key);
     }
 
-    private async updateCache(data: CacheModel): Promise<void> {
+    private async setCache(data: CacheModel): Promise<void> {
         if (this.cacheProvider) {
             await this.cacheProvider.set(data);
         }
     }
 
+    private async setMemory(data: MemoryModel): Promise<void> {
+        if (this.memoryProvider) {
+            await this.memoryProvider.set(data);
+        }
+    }
+
     /**
-     * Load all features from data provider in memory
-     * @returns List of features in memory
+     * Load all features from data provider to memory
+     * @returns List of features loaded
      */
     async loadAll(): Promise<DataModel[]> {
-        this.list = await this.dataProvider.getAll();
-        return this.list;
+        if (!this.memoryProvider) {
+            throw new Error("Memory provider is not defined");
+        }
+        const data = await this.dataProvider.getAll();
+        this.memoryProvider.setAll(data.map(a => ({
+            key: a.key,
+            value: a.value,
+            description: a.description
+        })));
+        return data;
+    }
+
+    async clearAll(): Promise<void> {
+        if (!this.memoryProvider) {
+            throw new Error("Memory provider is not defined");
+        }
+        return this.memoryProvider.clearAll();
     }
 
     /**
@@ -62,19 +84,22 @@ export class FeatureFlag {
      * @returns ValueModel with origin provider, key and value or undefined
      */
     async get(key: string, options?: GetOptions): Promise<ValueModel | undefined> {
-        const memoryResult = this.getFromMemory(key);
-        if (memoryResult !== undefined) {
-            return {
-                key,
-                value: memoryResult.value,
-                description: memoryResult.description,
-                origin: ProviderEnum.Memory
-            };
+        if (!options?.noMemory) {
+            const memoryResult = await this.getFromMemory(key);
+            if (memoryResult !== undefined) {
+                return {
+                    key,
+                    value: memoryResult.value,
+                    description: memoryResult.description,
+                    origin: ProviderEnum.Memory
+                };
+            }
         }
 
-        if (!options?.noCached) {
+        if (!options?.noCache) {
             const cacheResult = await this.getFromCache(key);
             if (cacheResult !== undefined) {
+                await this.setMemory({ key, value: cacheResult.value })
                 return {
                     key,
                     value: cacheResult.value,
@@ -85,9 +110,12 @@ export class FeatureFlag {
 
         const dataResult = await this.getFromData(key);
         if (dataResult !== undefined) {
-            await this.updateCache({ key, value: dataResult.value })
-        }
-        if (dataResult !== undefined) {
+            await this.setCache({ key, value: dataResult.value });
+            await this.setMemory({
+                key,
+                value: dataResult.value,
+                description: dataResult.description
+            });
             return {
                 key,
                 value: dataResult.value,

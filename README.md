@@ -4,7 +4,7 @@
 This is a node **Feature Flag (Feature Toggle)** module with common data/cache providers like json, mongodb, redis and memcached. If you need another or more complexed provider, feel free to implement it.
 
 <p align="center" width="100%">
-    <img src="assets/node-feature-flag.png">
+    <img src="assets/node-feature-flag-logo.png">
 </p>
 
 If you need more flexibility in your apps, like enable/disable features in production without change environments to deploy manualy or rerun the pipeline, this module is pretty good for you and your team.
@@ -77,19 +77,10 @@ Get the feature value:
     // print true
 ```
 
-If you prefer, you can load all features from data provider to memory.
-
-```js
-    await featureFlag.isOn("feature"); // from data
-    await featureFlag.isOn("feature"); // from data
-    await feature.loadAll();
-    await featureFlag.isOn("feature"); // from memory
-```
-
-**The feature flag process flow** 
+## The possible flow using memory + cache + data providers
 
 <p align="center" width="100%">
-    <img src="assets/feature-flag-flow.png">
+    <img src="assets/node-feature-flag-flow.jpg">
 </p>
 
 ## Examples
@@ -125,6 +116,38 @@ import { FeatureFlag, JsonDataProvider } from "node-feature-flag";
 
     // continue...
 })();
+```
+
+### Using **JSON** data provider with memory provider
+
+```js
+import { FeatureFlag, MongooseDataProvider, MemoryProvider } from "node-feature-flag"; 
+import mongoose from "mongoose";
+
+(async() => {
+    // mongoose data provider
+    await mongoose.connect("mongodb://localhost:27017/test");
+    const dataProvider = new MongooseDataProvider();
+    // memory provider
+    const memoryProvider = new MemoryProvider({ lifetime: 5 });
+
+    const featureFlag = new FeatureFlag({ dataProvider, memoryProvider });
+    
+    await featureFlag.isOn('feature'); // get from data provider and load memory
+    await featureFlag.isOn('feature'); // get from memory provider
+    // after 5seg
+    await featureFlag.isOn('feature'); // get from data provider and load memory again
+
+    // continue...
+})();
+```
+
+If you prefer, you can load all features from data provider to memory.
+
+```js
+    await feature.loadAll();
+    await featureFlag.isOn("feature"); // from memory
+    await feature.cleanAll(); // reset memory
 ```
 
 ### Using **Mongoose** data provider

@@ -7,7 +7,9 @@ interface KeyValue {
 };
 
 interface Options {
+    /** Accept a object json data like key: value or a array with DataModel item */
     data?: KeyValue | DataModel[],
+    /** A filename of json with key: value or a array with DataModel item */
     file?: string
 };
 
@@ -45,7 +47,6 @@ export class JsonDataProvider implements IDataProvider {
         if (this.data) {
             if (this.data instanceof Array) {
                 const data = (this.data as DataModel[]).find(a => a.key === key);
-                console.log('data', key, data);
                 if (data) {
                     return data;
                 }
