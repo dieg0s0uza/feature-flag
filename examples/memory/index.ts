@@ -31,7 +31,7 @@ const printAll = async (feature: FeatureFlag) => {
     });
 
     // load all features from data provider to memory
-    // await feature.loadAll();
+    // await feature.loadMemory();
 
     // check feature flags
     console.log('from data...');

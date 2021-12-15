@@ -299,7 +299,7 @@ describe('Feature Flag', () => {
             const dataProvider = new JsonDataProvider({ data });
             const memoryProvider = new MemoryProvider({ lifetime: 3 });
             const featureFlag = new FeatureFlag({ dataProvider, memoryProvider });
-            await featureFlag.loadAll();
+            await featureFlag.loadMemory();
             const feature = await featureFlag.get('test');
             expect(feature).not.toBeUndefined();
             expect(feature?.origin).toBe(ProviderEnum.Memory)

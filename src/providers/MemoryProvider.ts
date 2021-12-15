@@ -50,7 +50,7 @@ export class MemoryProvider implements IMemoryProvider {
                 return a;
             });
     }
-    async clearAll(): Promise<void> {
+    async flushAll(): Promise<void> {
         this.data = [];
     }
 }

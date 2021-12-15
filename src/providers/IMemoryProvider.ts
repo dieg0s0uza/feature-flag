@@ -29,5 +29,5 @@ export interface IMemoryProvider {
     /**
      * Delete all features from memory
      */
-    clearAll(): Promise<void>
+    flushAll(): Promise<void>
 }

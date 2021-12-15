@@ -38,10 +38,10 @@ yarn add node-feature-flag
 Import the FeatureFlag and prepare to load data from some provider
 
 ```js
-    import { FeatureFlag, JsonDataProvider } from "node-feature-flag";
-    
-    const dataProvider = new JsonDataProvider({ "feature": true });
-    const featureFlag = new FeatureFlag({ dataProvider });
+import { FeatureFlag, JsonDataProvider } from "node-feature-flag";
+
+const dataProvider = new JsonDataProvider({ "feature": true });
+const featureFlag = new FeatureFlag({ dataProvider });
 ```
 
 ### Check flags
@@ -49,32 +49,32 @@ Import the FeatureFlag and prepare to load data from some provider
 Check the feature status:
 
 ```js
-    const isOn = await featureFlag.isOn("feature");
-    const isOff = await featureFlag.isOff("feature");
+const isOn = await featureFlag.isOn("feature");
+const isOff = await featureFlag.isOff("feature");
 ```
 
 Get the feature data, with origin (memory, cache or data):
 
 ```js
-    const data = await featureFlag.get("feature");
-    console.log(data); // return undefined or feature object
-    /*
-        // print
-        {
-            key: "feature",
-            value: true,
-            description: null,
-            origin: 'data'
-        }
-    */
+const data = await featureFlag.get("feature");
+console.log(data); // return undefined or feature object
+/*
+    // print
+    {
+        key: "feature",
+        value: true,
+        description: null,
+        origin: 'data'
+    }
+*/
 ```
 
 Get the feature value:
 
 ```js
-    const value = await featureFlag.getValue("feature");
-    console.log(data); // return any value
-    // print true
+const value = await featureFlag.getValue("feature");
+console.log(data); // return any value
+// print true
 ```
 
 ## The possible flow using memory + cache + data providers
@@ -145,12 +145,16 @@ import mongoose from "mongoose";
 If you prefer, you can load all features from data provider to memory.
 
 ```js
-    await feature.loadAll();
-    await featureFlag.isOn("feature"); // from memory
-    await feature.cleanAll(); // reset memory
+await feature.loadMemory();
+await featureFlag.isOn("feature"); // from memory
+await feature.flushMemory(); // reset memory
 ```
 
 ### Using **Mongoose** data provider
+
+```bash
+npm install mongoose
+```
 
 ```js
 import { FeatureFlag, MongooseDataProvider } from "node-feature-flag"; 
@@ -169,6 +173,10 @@ import mongoose from "mongoose";
 
 ### Using **Mongodb** (native drive) data provider
 
+```bash
+npm install mongodb
+```
+
 ```js
 import { FeatureFlag, MongodbDataProvider } from "node-feature-flag"; 
 import { MongoClient } from "mongodb";
@@ -186,6 +194,10 @@ import { MongoClient } from "mongodb";
 ```
 
 ### Using **Mongoose** data provider with **Redis** cache provider
+
+```bash
+npm install mongoose redis
+```
 
 ```js
 import { 
@@ -214,6 +226,10 @@ import { createClient } from "redis";
 
 ### Using **Mongodb** (native drive) data provider with **Memcached** cache provider
 
+```bash
+npm install mongodb memjs
+```
+
 ```js
 import { 
     FeatureFlag, 
@@ -239,39 +255,52 @@ import memjs from "memjs";
 })();
 ```
 
-### Using your own data provider implementation
+### Using **MySQL** data provider
 
-```js
-import { IDataProvider, DataModel, DataValueType } from "node-feature-flag";
-
-export class MyDataProvider implements IDataProvider {
-
-    async getAll(): Promise<DataModel[]> {
-        // return all features from file, json, database, api...
-    }
-
-    async get(key: string): Promise<DataModel | undefined> {
-        // return a unique feature by key from file, json, database, api...
-    }
-}
+```bash
+npm install mysql2
 ```
 
-### Using your own cache provider implementation
-
 ```js
-import { ICacheProvider, CacheValueType, DataValueType } from "node-feature-flag";
+import { 
+    FeatureFlag, 
+    MysqlDataProvider 
+} from "node-feature-flag"; 
+import { createConnection } from "mysql2";
 
-export class MyCacheProvider implements ICacheProvider {
+(async() => {
+    // mysql data provider
+    const connection = createConnection({
+        host: "localhost",
+        user: "root",
+        password: "root",
+        database: "test"
+    });
+    connection.connect();
+    const dataProvider = new MysqlDataProvider({ connection });
 
-    async get(key: string): Promise<CacheValueType | undefined> {
-        // return a unique cached feature by key
-    }
-
-    async set(key: string, value: DataValueType): Promise<void> {
-        // create/update a unique cached feature by key
-    }
-}
+    const featureFlag = new FeatureFlag({ dataProvider });
+    
+    // continue...
+})();
 ```
+
+Example of table: 
+```sql 
+CREATE TABLE `features` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `key` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+  `value` varchar(1000) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `description` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `features_key_IDX` (`key`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+```
+
+### Using your own data, cache or memory provider implementation
+
+Just create your own class than implements IDataProvider, ICacheProvider or IMemoryProvider and pass to FeatureFlag. 
 
 ### Feel free to contribute
 
@@ -279,6 +308,6 @@ export class MyCacheProvider implements ICacheProvider {
 
 - And if you create a new module to data or cache provider, let us know to add here to help community.
 
-### License & copyright
+### License
 
-Licensed under the [MIT License](LICENSE).
+[MIT](LICENSE)

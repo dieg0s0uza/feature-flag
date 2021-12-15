@@ -10,9 +10,14 @@
     "declaration": true,
     "resolveJsonModule": true
   },
-  "lib": ["es2015"],
-  "include": [ "src" ],
+  "lib": [
+    "es2015"
+  ],
+  "include": [
+    "src"
+  ],
   "exclude": [
-    "**/*.spec.ts", "example"
+    "**/*.spec.ts",
+    "examples"
   ]
 }

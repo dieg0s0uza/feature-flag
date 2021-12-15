@@ -57,7 +57,7 @@ export class FeatureFlag {
      * Load all features from data provider to memory
      * @returns List of features loaded
      */
-    async loadAll(): Promise<DataModel[]> {
+    async loadMemory(): Promise<DataModel[]> {
         if (!this.memoryProvider) {
             throw new Error("Memory provider is not defined");
         }
@@ -70,11 +70,15 @@ export class FeatureFlag {
         return data;
     }
 
-    async clearAll(): Promise<void> {
+    /**
+     * Clear memory
+     * @returns void
+     */
+    async flushMemory(): Promise<void> {
         if (!this.memoryProvider) {
             throw new Error("Memory provider is not defined");
         }
-        return this.memoryProvider.clearAll();
+        return this.memoryProvider.flushAll();
     }
 
     /**
