@@ -85,7 +85,7 @@ console.log(data); // return any value
 
 ## Examples
 
-### Using basic **JSON** data provider
+### Using **JSON** data provider
 
 ```js
 import { FeatureFlag, JsonDataProvider } from "node-feature-flag"; 
@@ -118,7 +118,129 @@ import { FeatureFlag, JsonDataProvider } from "node-feature-flag";
 })();
 ```
 
-### Using **JSON** data provider with memory provider
+### Using **Mongoose** data provider
+
+```bash
+npm install mongoose
+```
+
+```js
+import { 
+    FeatureFlag, 
+    MongooseDataProvider
+} from "node-feature-flag"; 
+import mongoose from "mongoose";
+
+(async() => {
+    // mongoose data provider
+    await mongoose.connect();
+    const dataProvider = new MongooseDataProvider();
+
+    const featureFlag = new FeatureFlag({ dataProvider });
+    
+    // continue...
+})();
+```
+
+### Using **Mongodb** (native drive) data provider
+
+```bash
+npm install mongodb
+```
+
+```js
+import { FeatureFlag, MongodbDataProvider } from "node-feature-flag"; 
+import { MongoClient } from "mongodb";
+
+(async() => {
+    // mongodb data provider
+    const client = new MongoClient();
+    await client.connect();
+    const dataProvider = new MongodbDataProvider({ db: client.db() });
+
+    const featureFlag = new FeatureFlag({ dataProvider });
+    
+    // continue...
+})();
+```
+
+### Using **MySQL** data provider
+
+```bash
+npm install mysql2
+```
+
+```js
+import { 
+    FeatureFlag, 
+    MysqlDataProvider 
+} from "node-feature-flag"; 
+import { createConnection } from "mysql2";
+
+(async() => {
+    // mysql data provider
+    const connection = createConnection();
+    connection.connect();
+    const dataProvider = new MysqlDataProvider({ connection });
+
+    const featureFlag = new FeatureFlag({ dataProvider });
+    
+    // continue...
+})();
+```
+
+Example of table: 
+```sql 
+CREATE TABLE `features` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `key` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+  `value` varchar(1000) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `description` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `features_key_IDX` (`key`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+```
+
+### Using **Postgres** data provider
+
+```bash
+npm install pg
+```
+
+```js
+import { 
+    FeatureFlag, 
+    PostgresDataProvider 
+} from "node-feature-flag"; 
+import { Client } from "pg";
+
+(async() => {
+    // postgres data provider
+    const client = new Client();
+    await client.connect();
+    const dataProvider = new PostgresDataProvider({ client });
+
+    const featureFlag = new FeatureFlag({ dataProvider });
+    
+    // continue...
+})();
+```
+
+Example of table: 
+```sql 
+CREATE TABLE features (
+    id serial4 NOT NULL,
+    "key" varchar(200) NOT NULL,
+    value varchar(1000) NULL,
+    description varchar(200) NULL,
+    created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT features_pkey PRIMARY KEY (id)
+);
+CREATE UNIQUE INDEX features_key_idx ON features USING btree (key);
+```
+
+### Using data provider with **Memory** provider
 
 ```js
 import { FeatureFlag, MongooseDataProvider, MemoryProvider } from "node-feature-flag"; 
@@ -126,7 +248,7 @@ import mongoose from "mongoose";
 
 (async() => {
     // mongoose data provider
-    await mongoose.connect("mongodb://localhost:27017/test");
+    await mongoose.connect();
     const dataProvider = new MongooseDataProvider();
     // memory provider
     const memoryProvider = new MemoryProvider({ lifetime: 5 });
@@ -150,50 +272,7 @@ await featureFlag.isOn("feature"); // from memory
 await feature.flushMemory(); // reset memory
 ```
 
-### Using **Mongoose** data provider
-
-```bash
-npm install mongoose
-```
-
-```js
-import { FeatureFlag, MongooseDataProvider } from "node-feature-flag"; 
-import mongoose from "mongoose";
-
-(async() => {
-    // mongoose data provider
-    await mongoose.connect("mongodb://localhost:27017/test");
-    const dataProvider = new MongooseDataProvider();
-
-    const featureFlag = new FeatureFlag({ dataProvider });
-    
-    // continue...
-})();
-```
-
-### Using **Mongodb** (native drive) data provider
-
-```bash
-npm install mongodb
-```
-
-```js
-import { FeatureFlag, MongodbDataProvider } from "node-feature-flag"; 
-import { MongoClient } from "mongodb";
-
-(async() => {
-    // mongodb data provider
-    const client = new MongoClient("mongodb://localhost:27017/test");
-    await client.connect();
-    const dataProvider = new MongodbDataProvider({ db: client.db() });
-
-    const featureFlag = new FeatureFlag({ dataProvider });
-    
-    // continue...
-})();
-```
-
-### Using **Mongoose** data provider with **Redis** cache provider
+### Using Mongoose data provider with **Redis** cache provider
 
 ```bash
 npm install mongoose redis
@@ -210,11 +289,11 @@ import { createClient } from "redis";
 
 (async() => {
     // mongoose data provider
-    await mongoose.connect("mongodb://localhost:27017/test");
+    await mongoose.connect();
     const dataProvider = new MongooseDataProvider();
 
     // redis cache provider
-    const client = createClient({ url: "redis://localhost:6379" });
+    const client = createClient();
     await client.connect();
     const cacheProvider = new RedisCacheProvider({ client, lifetime: 60 });
 
@@ -224,7 +303,7 @@ import { createClient } from "redis";
 })();
 ```
 
-### Using **Mongodb** (native drive) data provider with **Memcached** cache provider
+### Using Mongodb (native drive) data provider with **Memcached** cache provider
 
 ```bash
 npm install mongodb memjs
@@ -241,61 +320,18 @@ import memjs from "memjs";
 
 (async() => {
     // mongodb data provider
-    const client = new MongoClient("mongodb://localhost:27017/test");
+    const client = new MongoClient();
     await client.connect();
     const dataProvider = new MongodbDataProvider({ db: client.db() });
 
     // memcached cache provider
-    const client = memjs.Client.create("localhost:11211");
+    const client = memjs.Client.create();
     const cacheProvider = new MemcachedCacheProvider({ client, lifetime: 60 });
 
     const featureFlag = new FeatureFlag({ dataProvider, cacheProvider });
     
     // continue...
 })();
-```
-
-### Using **MySQL** data provider
-
-```bash
-npm install mysql2
-```
-
-```js
-import { 
-    FeatureFlag, 
-    MysqlDataProvider 
-} from "node-feature-flag"; 
-import { createConnection } from "mysql2";
-
-(async() => {
-    // mysql data provider
-    const connection = createConnection({
-        host: "localhost",
-        user: "root",
-        password: "root",
-        database: "test"
-    });
-    connection.connect();
-    const dataProvider = new MysqlDataProvider({ connection });
-
-    const featureFlag = new FeatureFlag({ dataProvider });
-    
-    // continue...
-})();
-```
-
-Example of table: 
-```sql 
-CREATE TABLE `features` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `key` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
-  `value` varchar(1000) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `description` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `features_key_IDX` (`key`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 ```
 
 ### Using your own data, cache or memory provider implementation

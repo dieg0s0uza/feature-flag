@@ -8,7 +8,6 @@ interface Options {
     dataProvider: IDataProvider
     cacheProvider?: ICacheProvider
     memoryProvider?: IMemoryProvider
-    memoryProviderLifetime?: number
 }
 
 interface GetOptions {
@@ -51,6 +50,15 @@ export class FeatureFlag {
         if (this.memoryProvider) {
             await this.memoryProvider.set(data);
         }
+    }
+
+    /**
+     * Return all features from data
+     * @returns Promise<DataModel[]>
+     */
+    async getAll(): Promise<DataModel[]> {
+        const data = await this.dataProvider.getAll();
+        return data;
     }
 
     /**

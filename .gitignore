@@ -110,3 +110,4 @@ examples/mongoose
 examples/redis
 examples/memcached
 examples/mysql
+examples/postgres

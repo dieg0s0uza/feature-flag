@@ -1,6 +1,6 @@
 import { IDataProvider } from '.';
 import { DataModel } from '../models';
-import { Connection } from 'mysql2';
+import { Connection, Pool } from 'mysql2';
 
 const DEFAULT_TABLE = 'features';
 
@@ -8,11 +8,11 @@ interface Options {
     /** Table name of data. Default: 'features' */
     tableName?: string,
     /** A instance of mysql connection */
-    connection: Connection
+    connection: Connection | Pool
 }
 
 export class MysqlDataProvider implements IDataProvider {
-    private connection: Connection;
+    private connection: Connection | Pool;
     private tableName: string;
 
     constructor(options: Options) {

@@ -6,6 +6,7 @@ export * from './JsonDataProvider';
 export * from './MongodbDataProvider';
 export * from './MongooseDataProvider';
 export * from './MysqlDataProvider';
+export * from './PostgresDataProvider';
 
 export * from './MemcachedCacheProvider';
 export * from './RedisCacheProvider';
