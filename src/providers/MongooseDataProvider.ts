@@ -13,7 +13,7 @@ const schema = new Schema<DataModel>({
 interface Options {
     /** Collection name of data. Default: 'features' */
     collectionName?: string,
-    /** A instance of mongoose connection. Default: global mongoose instance */
+    /** An instance of mongoose connection. Default: global mongoose instance */
     connection?: Connection
 }
 

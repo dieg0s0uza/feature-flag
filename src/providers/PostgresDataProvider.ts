@@ -7,7 +7,7 @@ const DEFAULT_TABLE = 'features';
 interface Options {
     /** Table name of data. Default: 'features' */
     tableName?: string,
-    /** A instance of postgres connection */
+    /** An instance of postgres connection */
     client: Client | Pool
 }
 

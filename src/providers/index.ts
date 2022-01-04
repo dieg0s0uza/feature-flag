@@ -7,6 +7,7 @@ export * from './MongodbDataProvider';
 export * from './MongooseDataProvider';
 export * from './MysqlDataProvider';
 export * from './PostgresDataProvider';
+export * from './DynamodbDataProvider';
 
 export * from './MemcachedCacheProvider';
 export * from './RedisCacheProvider';

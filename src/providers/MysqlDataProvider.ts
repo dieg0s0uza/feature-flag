@@ -7,7 +7,7 @@ const DEFAULT_TABLE = 'features';
 interface Options {
     /** Table name of data. Default: 'features' */
     tableName?: string,
-    /** A instance of mysql connection */
+    /** An instance of mysql connection */
     connection: Connection | Pool
 }
 
